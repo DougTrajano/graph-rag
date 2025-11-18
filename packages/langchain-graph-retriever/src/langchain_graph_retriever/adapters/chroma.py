@@ -1,5 +1,6 @@
 """Provides an adapter for Chroma vector store integration."""
 
+import importlib.util
 from collections.abc import Sequence
 from typing import Any
 
@@ -11,9 +12,11 @@ from langchain_graph_retriever.adapters.langchain import ShreddedLangchainAdapte
 
 try:
     from langchain_chroma import Chroma
-except (ImportError, ModuleNotFoundError):
-    msg = "please `pip install langchain-chroma`"
-    raise ImportError(msg)
+except (ImportError, ModuleNotFoundError) as e:
+    raise ImportError("please `pip install langchain-chroma`") from e
+
+if importlib.util.find_spec("chromadb.api.types") is None:
+    raise ImportError("please `pip install chromadb`")
 
 
 class ChromaAdapter(ShreddedLangchainAdapter[Chroma]):
@@ -51,12 +54,6 @@ class ChromaAdapter(ShreddedLangchainAdapter[Chroma]):
         filter: dict[str, str] | None = None,
         **kwargs: Any,
     ) -> list[Document]:
-        try:
-            import chromadb.api.types
-        except (ImportError, ModuleNotFoundError):
-            msg = "please `pip install chromadb`"
-            raise ImportError(msg)
-
         if k > self.vector_store._collection.count():
             k = self.vector_store._collection.count()
         if k == 0:
