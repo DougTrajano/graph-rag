@@ -88,7 +88,7 @@ types-beautifulsoup4 = "types_beautifulsoup4"
 typing-extensions = "typing_extensions"
 
 [tool.deptry.per_rule_ignores]
-DEP002 = ["cassio", "opensearch-py"]
+DEP002 = ["cassio", "chromadb", "opensearch-py"]
 
 [tool.uv.sources]
 graph-retriever = { workspace = true }
